@@ -1,5 +1,5 @@
 # SophonDownloader
-Download mihoyo update assets using their new download method
+Download mihoyo assets using their new download method
 
 ---
 # Download
@@ -11,7 +11,8 @@ Download mihoyo update assets using their new download method
 # How to use
 ```
 Usage:
-    Sophon.Downloader.exe <gameId> <updateFrom> <updateTo> <outputDir> [options]
+    Sophon.Downloader.exe full <gameId> <version> <outputDir> [options]                  Download full game assets
+    Sophon.Downloader.exe update <gameId> <updateFrom> <updateTo> <outputDir> [options]  Download update assets
 
 Arguments:
     <gameId>        Game ID, e.g. gopR6Cufr3 for Genshin
@@ -30,6 +31,7 @@ Options:
 ```
 
 ---
+
 # Note
 
 This was made in a rush after Genshin stopped giving zip files for updates, please report any issue and please note ZZZ also uses Sophon but it wasn't tested for that game

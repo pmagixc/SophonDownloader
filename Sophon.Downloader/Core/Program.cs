@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Mono.Options;
@@ -26,6 +27,8 @@ namespace Core
             int threads = Environment.ProcessorCount;
             int maxHttpHandle = 128;
 
+            Console.WriteLine($"Sophon.Downloader v{Assembly.GetExecutingAssembly().GetName().Version} - Made with love by @Escartem <3");
+
             var options = new OptionSet {
                 { "matchingField=", "", v => matchingField = v },
                 { "branch=", "", v => branch = v },
@@ -40,7 +43,12 @@ namespace Core
             try
             {
                 extra = options.Parse(args);
-                action = extra[0].ToLower();
+                action = "";
+
+                if (extra.Count > 1)
+                {
+                    action = extra[0].ToLower();
+                }
 
                 if (action == "full" && extra.Count >= 4)
                 {
