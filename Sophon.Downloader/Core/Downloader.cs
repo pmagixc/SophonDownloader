@@ -56,8 +56,16 @@ namespace Core
                     string totalSizeUnit = Utils.FormatSize(updateSize);
 
                     Console.WriteLine($"* Found {sophonAssets.Count} assets");
-                    Console.WriteLine($"* Update data is {totalSizeDiffUnit}");
-                    Console.WriteLine($"* Because the full assets will be downloaded, total download size is {totalSizeUnit}");
+                    if (newManifestUrl != "")
+                    {
+                        Console.WriteLine($"* Update data is {totalSizeDiffUnit}");
+                        Console.WriteLine($"* Because the full assets will be downloaded, total download size is {totalSizeUnit}");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"* Total download size is {totalSizeUnit}");
+                    }
+                    
                     Console.Write("Continue? (y/n): ");
                     var input = Console.ReadLine()?.Trim().ToLower();
                     bool yes = input == "y" || input == "yes";
