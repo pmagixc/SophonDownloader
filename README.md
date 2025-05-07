@@ -2,6 +2,11 @@
 Download mihoyo update assets using their new download method
 
 ---
+# Download
+
+* Latest auto-build available [here](https://nightly.link/Escartem/SophonDownloader/workflows/build/master/Sophon.Downloader.zip) ✨
+
+---
 
 # How to use
 ```
@@ -23,6 +28,11 @@ Options:
     --handles=<value>           Number of HTTP handles to use, defaults to 128
     -h, --help                  Show this help message
 ```
+
+---
+# Note
+
+This was made in a rush after Genshin stopped giving zip files for updates, please report any issue and please note ZZZ also uses Sophon but it wasn't tested for that game
 
 ---
 
