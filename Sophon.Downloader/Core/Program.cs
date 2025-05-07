@@ -13,6 +13,7 @@ namespace Core
         public static async Task<int> Main(params string[] args)
         {
             bool showHelp = false;
+            string action = "";
             string gameId = "";
             string updateFrom = "";
             string updateTo = "";
@@ -39,13 +40,22 @@ namespace Core
             try
             {
                 extra = options.Parse(args);
-                if (extra.Count >= 4)
+                action = extra[0].ToLower();
+
+                if (action == "full" && extra.Count >= 4)
                 {
-                    gameId = extra[0];
-                    updateFrom = extra[1];
-                    updateTo = extra[2];
+                    gameId = extra[1];
+                    updateFrom = extra[2];
                     outputDir = extra[3];
-                } else
+                }
+                else if (action == "update" && extra.Count >= 5)
+                {
+                    gameId = extra[1];
+                    updateFrom = extra[2];
+                    updateTo = extra[3];
+                    outputDir = extra[4];
+                }
+                else
                 {
                     showHelp = true;
                 }
@@ -62,10 +72,12 @@ namespace Core
                 string exeName = Process.GetCurrentProcess().ProcessName + ".exe";
                 Console.WriteLine($"""
                     Usage:
-                        {exeName} <gameId> <updateFrom> <updateTo> <outputDir> [options]
+                        {exeName} full <gameId> <version> <outputDir> [options]                     Download full game assets
+                        {exeName} update <gameId> <updateFrom> <updateTo> <outputDir> [options]     Download update assets
 
                     Arguments:
                         <gameId>        Game ID, e.g. gopR6Cufr3 for Genshin
+                        <version>       Version to download, e.g. 5.6.0
                         <updateFrom>    Version to update from, e.g. 5.5.0
                         <updateTo>      Version to update to, e.g. 5.6.0
                         <outputDir>     Output directory to save the downloaded files
@@ -83,13 +95,17 @@ namespace Core
             }
 
             // main
-            SophonUrl sophonUrl = new SophonUrl(args[0], branch, launcherId, platApp);
+            SophonUrl sophonUrl = new SophonUrl(gameId, branch, launcherId, platApp);
             await sophonUrl.GetBuildData();
 
             Console.WriteLine($"Running with {threads} threads and {maxHttpHandle} handles");
 
             string prevManifest = sophonUrl.GetBuildUrl(updateFrom);
-            string newManifest = sophonUrl.GetBuildUrl(updateTo);
+            string newManifest = "";
+            if (action == "update")
+            {
+                newManifest = sophonUrl.GetBuildUrl(updateTo);
+            }
 
             await Downloader.StartDownload(prevManifest, newManifest, threads, maxHttpHandle, outputDir, matchingField);
 

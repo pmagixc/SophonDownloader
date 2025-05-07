@@ -48,8 +48,7 @@ namespace Core
                         matchingField,
                         prevManifestUrl,
                         newManifestUrl,
-                        tokenSource,
-                        true
+                        tokenSource
                     );
 
                     long totalSizeDiff = sophonAssets.GetCalculatedDiffSize(true);
