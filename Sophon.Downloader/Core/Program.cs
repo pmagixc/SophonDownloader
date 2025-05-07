@@ -83,7 +83,7 @@ namespace Core
             }
 
             // main
-            SophonUrl sophonUrl = new SophonUrl(args[0], branch, launcherId, platApp); // gopR6Cufr3 = hk4e
+            SophonUrl sophonUrl = new SophonUrl(args[0], branch, launcherId, platApp);
             await sophonUrl.GetBuildData();
 
             Console.WriteLine($"Running with {threads} threads and {maxHttpHandle} handles");
