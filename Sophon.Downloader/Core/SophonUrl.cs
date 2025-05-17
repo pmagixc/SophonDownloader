@@ -51,36 +51,53 @@ namespace Core
     }
     #endregion
 
+    public enum Region
+    {
+        OSREL,
+        CNREL
+    }
+
     public class SophonUrl
     {
-        private static string apiBase = "https://hyp-api.mihoyo.com/hyp/hyp-connect/api/getGameBranches";
-        private static string sophonBase = "https://api-takumi.mihoyo.com/downloader/sophon_chunk/api/getBuild";
         private static string defaultBranch = "main";
-        private static string defaultLauncherId = "jGHBHlcOq1";
-        private static string defaultPlatApp = "ddxf5qt290cg";
 
+        private string apiBase { get; set; }
+        private string sophonBase { get; set; }
         private string gameId { get; set; }
         private string branch {  get; set; } = defaultBranch;
-        private string launcherId { get; set; } = defaultLauncherId;
-        private string platApp { get; set; } = defaultPlatApp;
+        private string launcherId { get; set; }
+        private string platApp { get; set; }
         private string gameBiz { get; set; } = "";
         private string packageId { get; set; } = "";
         private string password { get; set; } = "";
 
-        public SophonUrl(string gameId, string branch = "", string launcherId = "", string platApp = "")
+        public SophonUrl(Region region, string gameId, string branch = "", string launcherId = "", string platApp = "")
         {
+            UpdateRegion(region);
             this.gameId = gameId;
-            if (!string.IsNullOrEmpty(branch))
+            if (!string.IsNullOrEmpty(branch)) this.branch = branch;
+            if (!string.IsNullOrEmpty(launcherId)) this.launcherId = launcherId;
+            if (!string.IsNullOrEmpty(platApp)) this.platApp = platApp;
+        }
+
+        public void UpdateRegion(Region region)
+        {
+            switch (region)
             {
-                this.branch = branch;
-            }
-            if (!string.IsNullOrEmpty(launcherId))
-            {
-                this.launcherId = launcherId;
-            }
-            if (!string.IsNullOrEmpty(platApp))
-            {
-                this.platApp = platApp;
+                case Region.OSREL:
+                    this.apiBase = "https://sg-hyp-api.hoyoverse.com/hyp/hyp-connect/api/getGameBranches";
+                    this.sophonBase = "https://sg-public-api.hoyoverse.com/downloader/sophon_chunk/api/getBuild";
+                    this.launcherId = "VYTpXlbWo8";
+                    this.platApp = "ddxf6vlr1reo";
+                    break;
+                case Region.CNREL:
+                    this.apiBase = "https://hyp-api.mihoyo.com/hyp/hyp-connect/api/getGameBranches";
+                    this.sophonBase = "https://api-takumi.mihoyo.com/downloader/sophon_chunk/api/getBuild";
+                    this.launcherId = "jGHBHlcOq1";
+                    this.platApp = "ddxf5qt290cg";
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(region), region, null);
             }
         }
 

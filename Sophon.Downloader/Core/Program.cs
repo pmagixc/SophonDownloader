@@ -20,6 +20,7 @@ namespace Core
             string updateTo = "";
             string outputDir = "";
             // options
+            string region = "OSREL"; // default region
             string matchingField = "game";
             string branch = "";
             string launcherId = "";
@@ -30,6 +31,7 @@ namespace Core
             Console.WriteLine($"Sophon.Downloader v{Assembly.GetExecutingAssembly().GetName().Version} - Made with love by @Escartem <3");
 
             var options = new OptionSet {
+                { "region=", "", v => region = v },
                 { "matchingField=", "", v => matchingField = v },
                 { "branch=", "", v => branch = v },
                 { "launcherId=", "", v => launcherId = v },
@@ -91,6 +93,7 @@ namespace Core
                         <outputDir>     Output directory to save the downloaded files
 
                     Options:
+                        --region=<value>            Region to use, either OSREL or CNREL, defaults to OSREL
                         --matchingField=<value>     Override the matching field in sophon manifest
                         --branch=<value>            Override branch name of the game data
                         --launcherId=<value>        Override launcher ID used when fetching packages
@@ -103,7 +106,8 @@ namespace Core
             }
 
             // main
-            SophonUrl sophonUrl = new SophonUrl(gameId, branch, launcherId, platApp);
+            Enum.TryParse(region, out Region curRegion);
+            SophonUrl sophonUrl = new SophonUrl(curRegion, gameId, branch, launcherId, platApp);
             await sophonUrl.GetBuildData();
 
             Console.WriteLine($"Running with {threads} threads and {maxHttpHandle} handles");
