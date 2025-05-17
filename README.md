@@ -61,3 +61,6 @@ This was made in a rush after Genshin stopped giving zip files for updates, plea
 # Credits
 
 - [Hi3Helper.Sophon](https://github.com/CollapseLauncher/Hi3Helper.Sophon) - Sophon assets management
+
+[p:en-us]: README.md
+[p:zh-cn]: README_zh-cn.md
