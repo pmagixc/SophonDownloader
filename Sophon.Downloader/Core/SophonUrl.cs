@@ -53,11 +53,11 @@ namespace Core
 
     public class SophonUrl
     {
-        private static string apiBase = "https://sg-hyp-api.hoyoverse.com/hyp/hyp-connect/api/getGameBranches";
-        private static string sophonBase = "https://sg-public-api.hoyoverse.com/downloader/sophon_chunk/api/getBuild";
+        private static string apiBase = "https://hyp-api.mihoyo.com/hyp/hyp-connect/api/getGameBranches";
+        private static string sophonBase = "https://api-takumi.mihoyo.com/downloader/sophon_chunk/api/getBuild";
         private static string defaultBranch = "main";
-        private static string defaultLauncherId = "VYTpXlbWo8";
-        private static string defaultPlatApp = "ddxf6vlr1reo";
+        private static string defaultLauncherId = "jGHBHlcOq1";
+        private static string defaultPlatApp = "ddxf5qt290cg";
 
         private string gameId { get; set; }
         private string branch {  get; set; } = defaultBranch;
