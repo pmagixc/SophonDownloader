@@ -20,6 +20,7 @@ namespace Core
             string updateTo = "";
             string outputDir = "";
             // options
+            string region = "OSREL"; // default region
             string matchingField = "game";
             string branch = "";
             string launcherId = "";
@@ -30,6 +31,7 @@ namespace Core
             Console.WriteLine($"Sophon.Downloader v{Assembly.GetExecutingAssembly().GetName().Version} - Made with love by @Escartem <3");
 
             var options = new OptionSet {
+                { "region=", "", v => region = v },
                 { "matchingField=", "", v => matchingField = v },
                 { "branch=", "", v => branch = v },
                 { "launcherId=", "", v => launcherId = v },
@@ -84,13 +86,14 @@ namespace Core
                         {exeName} update <gameId> <updateFrom> <updateTo> <outputDir> [options]     Download update assets
 
                     Arguments:
-                        <gameId>        Game ID, e.g. gopR6Cufr3 for Genshin
+                        <gameId>        Game ID, either hoyo id (hk4e, hkrpg, nap, bh2) or REL id (gopR6Cufr3, ...)
                         <version>       Version to download, e.g. 5.6.0
                         <updateFrom>    Version to update from, e.g. 5.5.0
                         <updateTo>      Version to update to, e.g. 5.6.0
                         <outputDir>     Output directory to save the downloaded files
 
                     Options:
+                        --region=<value>            Region to use, either OSREL or CNREL, defaults to OSREL
                         --matchingField=<value>     Override the matching field in sophon manifest
                         --branch=<value>            Override branch name of the game data
                         --launcherId=<value>        Override launcher ID used when fetching packages
@@ -103,15 +106,19 @@ namespace Core
             }
 
             // main
-            SophonUrl sophonUrl = new SophonUrl(gameId, branch, launcherId, platApp);
+            Enum.TryParse(region, out Region curRegion);
+            Game game = new Game(curRegion, gameId);
+            SophonUrl sophonUrl = new SophonUrl(curRegion, game.GetGameId(), branch, launcherId, platApp);
             await sophonUrl.GetBuildData();
 
             Console.WriteLine($"Running with {threads} threads and {maxHttpHandle} handles");
 
+            if (updateFrom.Count(c => c == '.') == 1) updateFrom += ".0";
             string prevManifest = sophonUrl.GetBuildUrl(updateFrom);
             string newManifest = "";
             if (action == "update")
             {
+                if (updateTo.Count(c => c == '.') == 1) updateTo += ".0";
                 newManifest = sophonUrl.GetBuildUrl(updateTo);
             }
 
