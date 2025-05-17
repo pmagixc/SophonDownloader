@@ -86,7 +86,7 @@ namespace Core
                         {exeName} update <gameId> <updateFrom> <updateTo> <outputDir> [options]     Download update assets
 
                     Arguments:
-                        <gameId>        Game ID, e.g. gopR6Cufr3 for Genshin
+                        <gameId>        Game ID, either hoyo id (hk4e, hkrpg, nap, bh2) or REL id (gopR6Cufr3, ...)
                         <version>       Version to download, e.g. 5.6.0
                         <updateFrom>    Version to update from, e.g. 5.5.0
                         <updateTo>      Version to update to, e.g. 5.6.0
@@ -107,15 +107,18 @@ namespace Core
 
             // main
             Enum.TryParse(region, out Region curRegion);
-            SophonUrl sophonUrl = new SophonUrl(curRegion, gameId, branch, launcherId, platApp);
+            Game game = new Game(curRegion, gameId);
+            SophonUrl sophonUrl = new SophonUrl(curRegion, game.GetGameId(), branch, launcherId, platApp);
             await sophonUrl.GetBuildData();
 
             Console.WriteLine($"Running with {threads} threads and {maxHttpHandle} handles");
 
+            if (updateFrom.Count(c => c == '.') == 1) updateFrom += ".0";
             string prevManifest = sophonUrl.GetBuildUrl(updateFrom);
             string newManifest = "";
             if (action == "update")
             {
+                if (updateTo.Count(c => c == '.') == 1) updateTo += ".0";
                 newManifest = sophonUrl.GetBuildUrl(updateTo);
             }
 
