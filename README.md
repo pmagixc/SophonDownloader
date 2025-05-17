@@ -41,6 +41,17 @@ Options:
 
 ---
 
+# Game ID
+
+| Game | ID |
+| - | - |
+| Honkai Impact 3rd | `bh2` |
+| Genshin Impact | `hk4e` |
+| Honkai: Star Rail | `hkrpg` |
+| Zenless Zone Zero | `nap` |
+
+---
+
 # Note
 
 This was made in a rush after Genshin stopped giving zip files for updates, please report any issue and please note ZZZ also uses Sophon but it wasn't tested for that game
