@@ -1,7 +1,14 @@
 # SophonDownloader
 Download mihoyo assets using their new download method
 
+[English][p:en-us] | [中文][p:zh-cn]
+
 ---
+
+After Genshin forced SophonChunks to update and stopped giving zip files for updates in version 5.6, it was no longer possible to download game assets without using HoYoPlay.
+
+---
+
 # Download
 
 * Latest auto-build available [here](https://nightly.link/Escartem/SophonDownloader/workflows/build/master/Sophon.Downloader.zip) ✨
@@ -15,13 +22,15 @@ Usage:
     Sophon.Downloader.exe update <gameId> <updateFrom> <updateTo> <outputDir> [options]  Download update assets
 
 Arguments:
-    <gameId>        Game ID, e.g. gopR6Cufr3 for Genshin
-    <updateFrom>    Version to update from, e.g. 5.5.0
-    <updateTo>      Version to update to, e.g. 5.6.0
+    <gameId>        Game ID, either hoyo id (hk4e, hkrpg, nap, bh2) or REL id (gopR6Cufr3, ...)
+    <version>       Version to download
+    <updateFrom>    Version to update from
+    <updateTo>      Version to update to
     <outputDir>     Output directory to save the downloaded files
 
 Options:
-    --matchingField=<value>     Override the matching field in sophon manifest
+    --region=<value>            Region to use, either OSREL or CNREL, defaults to OSREL
+    --matchingField=<value>     Override the matching field in sophon manifest (game, zh-cn, en-us, ja-jp, ko-kr)
     --branch=<value>            Override branch name of the game data
     --launcherId=<value>        Override launcher ID used when fetching packages
     --platApp=<value>           Override platform application ID used when fetching packages
