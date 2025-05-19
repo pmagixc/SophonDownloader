@@ -41,7 +41,7 @@ namespace Core
                     }
 
                     // fetch assets
-                    Console.WriteLine("Fetching assets...");
+                    if (!Program.silent) Console.WriteLine("Fetching assets...");
 
                     (List<SophonAsset> sophonAssets, long updateSize) = await Assets.GetAssetsFromManifests(
                         httpClient,
@@ -55,25 +55,28 @@ namespace Core
                     string totalSizeDiffUnit = Utils.FormatSize(totalSizeDiff);
                     string totalSizeUnit = Utils.FormatSize(updateSize);
 
-                    Console.WriteLine($"* Found {sophonAssets.Count} assets");
-                    if (newManifestUrl != "")
+                    if (!Program.silent)
                     {
-                        Console.WriteLine($"* Update data is {totalSizeDiffUnit}");
-                        Console.WriteLine($"* Because the full assets will be downloaded, total download size is {totalSizeUnit}");
-                    }
-                    else
-                    {
-                        Console.WriteLine($"* Total download size is {totalSizeUnit}");
-                    }
-                    
-                    Console.Write("Continue? (y/n): ");
-                    var input = Console.ReadLine()?.Trim().ToLower();
-                    bool yes = input == "y" || input == "yes";
+                        Console.WriteLine($"* Found {sophonAssets.Count} assets");
+                        if (newManifestUrl != "")
+                        {
+                            Console.WriteLine($"* Update data is {totalSizeDiffUnit}");
+                            Console.WriteLine($"* Because the full assets will be downloaded, total download size is {totalSizeUnit}");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"* Total download size is {totalSizeUnit}");
+                        }
 
-                    if (!yes)
-                    {
-                        Console.WriteLine("Aborting...");
-                        return 0;
+                        Console.Write("Continue? (y/n): ");
+                        var input = Console.ReadLine()?.Trim().ToLower();
+                        bool yes = input == "y" || input == "yes";
+
+                        if (!yes)
+                        {
+                            Console.WriteLine("Aborting...");
+                            return 0;
+                        }
                     }
 
                     long currentRead = 0;
@@ -113,7 +116,7 @@ namespace Core
                                         Interlocked.Add(ref currentRead, read);
                                         string sizeUnit = Utils.FormatSize(currentRead);
                                         string speedUnit = Utils.FormatSize(currentRead / stopwatch.Elapsed.TotalSeconds);
-                                        Console.Write($"{_cancelMessage} | {sizeUnit}/{totalSizeUnit} ({totalSizeDiffUnit} diff) ({speedUnit}/s) \r");
+                                        if (!Program.silent) Console.Write($"{_cancelMessage} | {sizeUnit}/{totalSizeUnit} ({totalSizeDiffUnit} diff) ({speedUnit}/s) \r");
                                     },
                                     null,
                                     null,
@@ -142,8 +145,11 @@ namespace Core
                     }
                     catch (OperationCanceledException)
                     {
-                        Console.WriteLine(""); // failsafe
-                        Console.WriteLine("Cancelled !");
+                        if (!Program.silent)
+                        {
+                            Console.WriteLine(""); // failsafe
+                            Console.WriteLine("Cancelled !");
+                        }
                     }
                     finally
                     {

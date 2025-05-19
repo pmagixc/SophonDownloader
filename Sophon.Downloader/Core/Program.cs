@@ -11,9 +11,12 @@ namespace Core
 {
     public class Program
     {
+        public static bool silent = false;
+
         public static async Task<int> Main(params string[] args)
         {
             bool showHelp = false;
+            // arguments
             string action = "";
             string gameId = "";
             string updateFrom = "";
@@ -28,8 +31,6 @@ namespace Core
             int threads = Environment.ProcessorCount;
             int maxHttpHandle = 128;
 
-            Console.WriteLine($"Sophon.Downloader v{Assembly.GetExecutingAssembly().GetName().Version} - Made with love by @Escartem <3");
-
             var options = new OptionSet {
                 { "region=", "", v => region = v },
                 { "branch=", "", v => branch = v },
@@ -37,6 +38,7 @@ namespace Core
                 { "platApp=", "", v => platApp = v },
                 { "threads=", "", v => threads = int.Parse(v) },
                 { "handles=", "", v => maxHttpHandle = int.Parse(v) },
+                { "silent", "", v => silent = v != null },
                 { "h|help", "show help", v => showHelp = v != null },
             };
 
@@ -78,6 +80,8 @@ namespace Core
                 return 0;
             }
 
+            if (!silent) Console.WriteLine($"Sophon.Downloader v{Assembly.GetExecutingAssembly().GetName().Version} - Made with love by @Escartem <3");
+
             if (showHelp)
             {
                 string exeName = Process.GetCurrentProcess().ProcessName + ".exe";
@@ -101,6 +105,7 @@ namespace Core
                         --platApp=<value>           Override platform application ID used when fetching packages
                         --threads=<value>           Number of threads to use, defaults to the number of processors
                         --handles=<value>           Number of HTTP handles to use, defaults to 128
+                        --silent                    Suppress confirmation message and output
                         -h, --help                  Show this help message
                  """);
                 return 0;
@@ -112,7 +117,7 @@ namespace Core
             SophonUrl sophonUrl = new SophonUrl(curRegion, game.GetGameId(), branch, launcherId, platApp);
             await sophonUrl.GetBuildData();
 
-            Console.WriteLine($"Running with {threads} threads and {maxHttpHandle} handles");
+            if (!silent) Console.WriteLine($"Running with {threads} threads and {maxHttpHandle} handles");
 
             if (updateFrom.Count(c => c == '.') == 1) updateFrom += ".0";
             string prevManifest = sophonUrl.GetBuildUrl(updateFrom);
