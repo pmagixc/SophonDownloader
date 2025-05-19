@@ -18,24 +18,25 @@ After Genshin forced SophonChunks to update and stopped giving zip files for upd
 # How to use
 ```
 Usage:
-    Sophon.Downloader.exe full <gameId> <version> <outputDir> [options]                  Download full game assets
-    Sophon.Downloader.exe update <gameId> <updateFrom> <updateTo> <outputDir> [options]  Download update assets
+    Sophon.Downloader.exe full <gameId> <package> <version> <outputDir> [options]                     Download full game assets
+    Sophon.Downloader.exe update <gameId> <package> <updateFrom> <updateTo> <outputDir> [options]     Download update assets
 
 Arguments:
     <gameId>        Game ID, either hoyo id (hk4e, hkrpg, nap, bh2) or REL id (gopR6Cufr3, ...)
+    <package>       What to download, either "game" or for audio "zh-cn", "en-us", "ja-jp" or "ko-kr"
     <version>       Version to download
     <updateFrom>    Version to update from
     <updateTo>      Version to update to
     <outputDir>     Output directory to save the downloaded files
 
 Options:
-    --region=<value>            Region to use, either OSREL or CNREL, defaults to OSREL
-    --matchingField=<value>     Override the matching field in sophon manifest (game, zh-cn, en-us, ja-jp, ko-kr)
+    --region=<value>            Region to use, either OSREL (overseas) or CNREL (china), defaults to OSREL
     --branch=<value>            Override branch name of the game data
     --launcherId=<value>        Override launcher ID used when fetching packages
     --platApp=<value>           Override platform application ID used when fetching packages
     --threads=<value>           Number of threads to use, defaults to the number of processors
     --handles=<value>           Number of HTTP handles to use, defaults to 128
+    --silent                    Suppress confirmation message and output
     -h, --help                  Show this help message
 ```
 
