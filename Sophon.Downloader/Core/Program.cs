@@ -19,9 +19,9 @@ namespace Core
             string updateFrom = "";
             string updateTo = "";
             string outputDir = "";
+            string matchingField = "";
             // options
             string region = "OSREL"; // default region
-            string matchingField = "game";
             string branch = "";
             string launcherId = "";
             string platApp = "";
@@ -32,7 +32,6 @@ namespace Core
 
             var options = new OptionSet {
                 { "region=", "", v => region = v },
-                { "matchingField=", "", v => matchingField = v },
                 { "branch=", "", v => branch = v },
                 { "launcherId=", "", v => launcherId = v },
                 { "platApp=", "", v => platApp = v },
@@ -52,18 +51,20 @@ namespace Core
                     action = extra[0].ToLower();
                 }
 
-                if (action == "full" && extra.Count >= 4)
+                if (action == "full" && extra.Count >= 5)
                 {
                     gameId = extra[1];
-                    updateFrom = extra[2];
-                    outputDir = extra[3];
-                }
-                else if (action == "update" && extra.Count >= 5)
-                {
-                    gameId = extra[1];
-                    updateFrom = extra[2];
-                    updateTo = extra[3];
+                    matchingField = extra[2];
+                    updateFrom = extra[3];
                     outputDir = extra[4];
+                }
+                else if (action == "update" && extra.Count >= 6)
+                {
+                    gameId = extra[1];
+                    matchingField = extra[2];
+                    updateFrom = extra[3];
+                    updateTo = extra[4];
+                    outputDir = extra[5];
                 }
                 else
                 {
@@ -82,19 +83,19 @@ namespace Core
                 string exeName = Process.GetCurrentProcess().ProcessName + ".exe";
                 Console.WriteLine($"""
                     Usage:
-                        {exeName} full <gameId> <version> <outputDir> [options]                     Download full game assets
-                        {exeName} update <gameId> <updateFrom> <updateTo> <outputDir> [options]     Download update assets
+                        {exeName} full <gameId> <package> <version> <outputDir> [options]                     Download full game assets
+                        {exeName} update <gameId> <package> <updateFrom> <updateTo> <outputDir> [options]     Download update assets
 
                     Arguments:
                         <gameId>        Game ID, either hoyo id (hk4e, hkrpg, nap, bh2) or REL id (gopR6Cufr3, ...)
-                        <version>       Version to download, e.g. 5.6.0
-                        <updateFrom>    Version to update from, e.g. 5.5.0
-                        <updateTo>      Version to update to, e.g. 5.6.0
+                        <package>       What to download, either "game" or for audio "zh-cn", "en-us", "ja-jp" or "ko-kr"
+                        <version>       Version to download
+                        <updateFrom>    Version to update from
+                        <updateTo>      Version to update to
                         <outputDir>     Output directory to save the downloaded files
 
                     Options:
-                        --region=<value>            Region to use, either OSREL or CNREL, defaults to OSREL
-                        --matchingField=<value>     Override the matching field in sophon manifest
+                        --region=<value>            Region to use, either OSREL (overseas) or CNREL (china), defaults to OSREL
                         --branch=<value>            Override branch name of the game data
                         --launcherId=<value>        Override launcher ID used when fetching packages
                         --platApp=<value>           Override platform application ID used when fetching packages
