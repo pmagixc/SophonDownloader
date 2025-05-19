@@ -26,6 +26,7 @@ namespace Core
     {
         public BranchesGame game { get; set; }
         public BranchesMain main { get; set; }
+        public BranchesMain pre_download { get; set; }
     }
 
     public class BranchesGame
@@ -57,25 +58,30 @@ namespace Core
         CNREL
     }
 
+    public enum BranchType
+    {
+        Main,
+        PreDownload
+    }
+
     public class SophonUrl
     {
-        private static string defaultBranch = "main";
-
         private string apiBase { get; set; }
         private string sophonBase { get; set; }
         private string gameId { get; set; }
-        private string branch {  get; set; } = defaultBranch;
+        private BranchType branch {  get; set; }
         private string launcherId { get; set; }
         private string platApp { get; set; }
         private string gameBiz { get; set; } = "";
         private string packageId { get; set; } = "";
         private string password { get; set; } = "";
+        private BranchesRoot branchBackup { get; set; } = new BranchesRoot();
 
-        public SophonUrl(Region region, string gameId, string branch = "", string launcherId = "", string platApp = "")
+        public SophonUrl(Region region, string gameId, BranchType branch = BranchType.Main, string launcherId = "", string platApp = "")
         {
             UpdateRegion(region);
             this.gameId = gameId;
-            if (!string.IsNullOrEmpty(branch)) this.branch = branch;
+            this.branch = branch;
             if (!string.IsNullOrEmpty(launcherId)) this.launcherId = launcherId;
             if (!string.IsNullOrEmpty(platApp)) this.platApp = platApp;
         }
@@ -113,36 +119,61 @@ namespace Core
             var json = await FetchUrl(uri.ToString());
             var obj = JsonSerializer.Deserialize<BranchesRoot>(json);
 
-            if ((!obj.retcode.Equals(0) && obj.message == "OK"))
+            string[] data = ParseBuildData(obj, this.branch);
+
+            if (data[0] != "OK")
             {
-                Console.WriteLine($"Error: {obj.message}");
+                Console.WriteLine($"Error: {data[1]}");
                 return -1;
             }
 
-            var branchObj = GetBranch(obj, this.branch);
-            if (branchObj == null)
-            {
-                Console.WriteLine($"Error: Branch {this.branch} not found");
-                return -1;
-            }
-            gameBiz = branchObj.game.biz;
+            this.gameBiz = data[1];
+            this.packageId = data[2];
+            this.password = data[3];
 
-            packageId = branchObj.main.package_id;
-            password = branchObj.main.password;
+            this.branchBackup = obj;
 
             return 0;
         }
 
-        public string GetBuildUrl(string version)
+        private string[] ParseBuildData(BranchesRoot obj, BranchType searchBranch)
+        {
+            if ((!obj.retcode.Equals(0) && obj.message == "OK"))
+            {
+                return ["ERROR", obj.message];
+            }
+
+            var branchObj = GetBranch(obj, searchBranch);
+            if (branchObj == null)
+            {
+                return ["ERROR", $"Branch {searchBranch} not found"];
+            }
+
+            var gameObj = GetBranchGame(obj);
+
+            return ["OK", gameObj.biz, branchObj.package_id, branchObj.password];
+        }
+
+        public string GetBuildUrl(string version, bool isUpdate = false)
         {
             var uri = new UriBuilder(sophonBase);
             var query = HttpUtility.ParseQueryString(uri.Query);
 
-            query["branch"] = this.branch;
-            query["package_id"] = this.packageId;
-            query["password"] = this.password;
+            if (Program.action == "update" && !isUpdate)
+            {
+                query["branch"] = BranchType.Main.ToString().ToLower();
+                string[] data = ParseBuildData(this.branchBackup, BranchType.Main);
+                query["package_id"] = data[2];
+                query["password"] = data[3];
+            } else
+            {
+                query["branch"] = this.branch.ToString().ToLower();
+                query["package_id"] = this.packageId;
+                query["password"] = this.password;
+            }
+
             query["plat_app"] = this.platApp;
-            query["tag"] = version;
+            if (Program.action == "update" && !isUpdate) query["tag"] = version;
 
             uri.Query = query.ToString();
             return uri.ToString();
@@ -154,17 +185,27 @@ namespace Core
             return await client.GetStringAsync(url);
         }
 
-        private static BranchesGameBranch? GetBranch(BranchesRoot obj, string searchBranch)
+        private static BranchesGame? GetBranchGame(BranchesRoot obj)
         {
-            foreach (var branch in obj.data.game_branches)
-            {
-                if (branch.main.branch == searchBranch)
-                {
-                    return branch;
-                }
-            }
+            return obj.data.game_branches.FirstOrDefault()?.game;
+        }
 
-            return null;
+        private static BranchesMain? GetBranch(BranchesRoot obj, BranchType searchBranch)
+        {
+            // since response is deserialized, searching is useless, we assume we have main and predownload only
+
+            if (searchBranch is BranchType.Main)
+            {
+                return obj.data.game_branches.FirstOrDefault().main;
+            }
+            else if (searchBranch is BranchType.PreDownload)
+            {
+                return obj.data.game_branches.FirstOrDefault().pre_download;
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

@@ -12,12 +12,13 @@ namespace Core
     public class Program
     {
         public static bool silent = false;
+        public static string action = "";
+        public static string updateFrom = "";
 
         public static async Task<int> Main(params string[] args)
         {
             bool showHelp = false;
             // arguments
-            string action = "";
             string gameId = "";
             string updateFrom = "";
             string updateTo = "";
@@ -25,7 +26,7 @@ namespace Core
             string matchingField = "";
             // options
             string region = "OSREL"; // default region
-            string branch = "";
+            string branch = "main"; // default branch
             string launcherId = "";
             string platApp = "";
             int threads = Environment.ProcessorCount;
@@ -113,19 +114,20 @@ namespace Core
 
             // main
             Enum.TryParse(region, out Region curRegion);
+            BranchType curBranch = Enum.Parse<BranchType>(branch, true);
             Game game = new Game(curRegion, gameId);
-            SophonUrl sophonUrl = new SophonUrl(curRegion, game.GetGameId(), branch, launcherId, platApp);
+            SophonUrl sophonUrl = new SophonUrl(curRegion, game.GetGameId(), curBranch, launcherId, platApp);
             await sophonUrl.GetBuildData();
 
             if (!silent) Console.WriteLine($"Running with {threads} threads and {maxHttpHandle} handles");
 
             if (updateFrom.Count(c => c == '.') == 1) updateFrom += ".0";
-            string prevManifest = sophonUrl.GetBuildUrl(updateFrom);
+            string prevManifest = sophonUrl.GetBuildUrl(updateFrom, false);
             string newManifest = "";
             if (action == "update")
             {
                 if (updateTo.Count(c => c == '.') == 1) updateTo += ".0";
-                newManifest = sophonUrl.GetBuildUrl(updateTo);
+                newManifest = sophonUrl.GetBuildUrl(updateTo, true);
             }
 
             await Downloader.StartDownload(prevManifest, newManifest, threads, maxHttpHandle, outputDir, matchingField);
