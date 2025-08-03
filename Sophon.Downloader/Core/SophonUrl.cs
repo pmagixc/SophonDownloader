@@ -173,7 +173,7 @@ namespace Core
             }
 
             query["plat_app"] = this.platApp;
-            if (Program.action == "update" && !isUpdate) query["tag"] = version;
+            query["tag"] = version;
 
             uri.Query = query.ToString();
             return uri.ToString();
