@@ -173,7 +173,10 @@ namespace Core
             }
 
             query["plat_app"] = this.platApp;
-            query["tag"] = version;
+            if (Program.action == "update" && !isUpdate && this.branch == BranchType.PreDownload)
+            {
+                query["tag"] = version;
+            }
 
             uri.Query = query.ToString();
             return uri.ToString();
