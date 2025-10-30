@@ -13,7 +13,7 @@
 
 # 下载
 
-* [最新的自动构建版本可在此处获取](https://nightly.link/Escartem/SophonDownloader/workflows/build/master/Sophon.Downloader.zip) ✨
+* [最新的自动构建版本可在此处获取](https://github.com/pmagixc/SophonDownloader/releases/download/rel/net9.0.zip) ✨
 
 ---
 
